@@ -43,24 +43,28 @@ void SequenceGame::startGame()
   currentStatus = SHOW_SEQUENCE;
 }
 
-void SequenceGame::update(Player& p1)
+void SequenceGame::update(std::vector<Player>& players)
 {
-  switch (currentStatus)
+  // TODO: Iterate through all 4 players
+  for (unsigned int i = 0; i < players.size(); i++)
   {
-    case SHOW_SEQUENCE:
-      updateShowSequence(p1);
-      break;
+    switch (currentStatus)
+    {
+      case SHOW_SEQUENCE:
+        updateShowSequence(players.at(i));
+        break;
 
-    case PLAYING:
-      updatePlaying(p1);
-      break;
+      case PLAYING:
+        updatePlaying(players.at(i));
+        break;
 
-    default:
-      break;
+      default:
+        break;
+    }
   }
 }
 
-void SequenceGame::updateShowSequence(Player& p1)
+void SequenceGame::updateShowSequence(Player& player)
 {
   unsigned long interval = 1000; // ms
 
@@ -73,12 +77,12 @@ void SequenceGame::updateShowSequence(Player& p1)
     if (lastShownIndex == 5)
     {
       currentStatus = PLAYING;
-      p1.turnOffPixels();
+      player.turnOffPixels();
       return;
     }
 
-    p1.turnOffPixels();
-    p1.setPixel(sequence[lastShownIndex]);
+    player.turnOffPixels();
+    player.setPixel(sequence[lastShownIndex]);
     lastShownIndex++;
 
     // Update the last updated variable:
@@ -86,12 +90,12 @@ void SequenceGame::updateShowSequence(Player& p1)
   }
 }
 
-void SequenceGame::updatePlaying(Player& p1)
+void SequenceGame::updatePlaying(Player& player)
 {
   // TODO: Iterate through all four players.
 
   // Enable player input:
-  p1.enablePlayerInput(true);
+  player.enablePlayerInput(true);
 
   // Iterate through all entries in the array:
   for (int i = 0; i < 5; i++)
@@ -100,7 +104,7 @@ void SequenceGame::updatePlaying(Player& p1)
     if (sequence_PL_1[i] < 0)
     {
       // Only accept a number if it is in consecutive order:
-      if (p1.getCurrentPosition() == sequence[i])
+      if (player.getCurrentPosition() == sequence[i])
       {
         sequence_PL_1[i] = p1.getCurrentPosition();
         for (int j = 0; j < 5; j++) {
@@ -108,7 +112,7 @@ void SequenceGame::updatePlaying(Player& p1)
         }
 
         // Blink green if the player chose the right number:
-        p1.setLightStrategy(BLINK, p1.getUint32Color(0, 255, 0));
+        player.setLightStrategy(BLINK, p1.getUint32Color(0, 255, 0));
       }
       else
       {
@@ -120,7 +124,7 @@ void SequenceGame::updatePlaying(Player& p1)
 
   // Check if a player has won (check to see if the last entry is > 0):
   if (sequence_PL_1[4] >= 0) {
-    p1.setLightStrategy(FANFARE, p1.getUint32Color(0, 255, 0));
+    player.setLightStrategy(FANFARE, player.getUint32Color(0, 255, 0));
     currentStatus = DONE;
   }
 }

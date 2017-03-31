@@ -4,6 +4,8 @@
 
 #include "Arduino.h"
 #include "player.h"
+#include <StandardCplusplus.h>
+#include <vector>
 
 enum Gamestatus { SHOW_SEQUENCE, PLAYING, DONE };
 
@@ -19,14 +21,14 @@ class SequenceGame {
   int lastShownIndex;
 
   // Private methods:
-  void updateShowSequence(Player& p1);
-  void updatePlaying(Player& p1);
+  void updateShowSequence(Player& player);
+  void updatePlaying(Player& player);
 
 public:
   SequenceGame();
 
   void startGame();
-  void update(Player& p1);
+  void update(std::vector<Player>& players);
 };
 
 #endif
