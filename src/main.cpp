@@ -24,9 +24,11 @@ void setup()
   players.push_back(Player(5, 15, 16, 8));
   players.push_back(Player(6, 17, 18, 9));
 
-  for (int i = 0; i < 4; i++)
+  Serial.println(players.size());
+
+  for (Player p : players)
   {
-    players.at(i).initialize();
+    p.initialize();
   }
 
   // TODO: Start the game from the Serial.
@@ -38,9 +40,9 @@ void setup()
 void loop()
 {
   // Update players:
-  for (unsigned int i = 0; i < players.size(); i++)
+  for (Player p : players)
   {
-    players.at(i).update();
+    p.update();
   }
 
   // Update the game:

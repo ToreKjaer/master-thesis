@@ -7,6 +7,8 @@
 #include <StandardCplusplus.h>
 #include <vector>
 
+using namespace std;
+
 enum Gamestatus { SHOW_SEQUENCE, PLAYING, DONE };
 
 class SequenceGame {
@@ -21,8 +23,8 @@ class SequenceGame {
   int lastShownIndex;
 
   // Private methods:
-  void updateShowSequence(Player& player);
-  void updatePlaying(Player& player);
+  void updateShowSequence(std::vector<Player>& players);
+  void updatePlaying(std::vector<Player>& players);
 
 public:
   SequenceGame();
