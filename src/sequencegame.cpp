@@ -43,31 +43,26 @@ void SequenceGame::startGame()
   currentStatus = SHOW_SEQUENCE;
 }
 
-void SequenceGame::update(std::vector<Player>& players)
+void SequenceGame::update(std::list<Player>& players)
 {
-  // TODO: Iterate through all 4 players
-  //for (Player p : players)
-  //for (unsigned int i = 0; i < players.size(); i++)
-  //{
-    switch (currentStatus)
-    {
-      case SHOW_SEQUENCE:
-        updateShowSequence(players);
-        break;
+  switch (currentStatus)
+  {
+    case SHOW_SEQUENCE:
+      updateShowSequence(players);
+      break;
 
-      case PLAYING:
-        updatePlaying(players);
-        break;
+    case PLAYING:
+      updatePlaying(players);
+      break;
 
-      default:
-        break;
-    }
-  //}
+    default:
+      break;
+  }
 }
 
-void SequenceGame::updateShowSequence(std::vector<Player>& players)
+void SequenceGame::updateShowSequence(std::list<Player>& players)
 {
-  for (Player p : players)
+  for(std::list<Player>::iterator iterator = players.begin(); iterator != players.end(); iterator++)
   {
     unsigned long interval = 1000; // ms
 
@@ -80,12 +75,12 @@ void SequenceGame::updateShowSequence(std::vector<Player>& players)
       if (lastShownIndex == 5)
       {
         currentStatus = PLAYING;
-        p.turnOffPixels();
+        (*iterator).turnOffPixels();
         return;
       }
 
-      p.turnOffPixels();
-      p.setPixel(sequence[lastShownIndex]);
+      (*iterator).turnOffPixels();
+      (*iterator).setPixel(sequence[lastShownIndex]);
       lastShownIndex++;
 
       // Update the last updated variable:
@@ -94,13 +89,12 @@ void SequenceGame::updateShowSequence(std::vector<Player>& players)
   }
 }
 
-void SequenceGame::updatePlaying(std::vector<Player>& players)
+void SequenceGame::updatePlaying(std::list<Player>& players)
 {
-  // TODO: Iterate through all four players.
-  for (Player p : players)
+  for(std::list<Player>::iterator iterator = players.begin(); iterator != players.end(); iterator++)
   {
     // Enable player input:
-    p.enablePlayerInput(true);
+    (*iterator).enablePlayerInput(true);
 
     // Iterate through all entries in the array:
     for (int i = 0; i < 5; i++)
@@ -109,15 +103,15 @@ void SequenceGame::updatePlaying(std::vector<Player>& players)
       if (sequence_PL_1[i] < 0)
       {
         // Only accept a number if it is in consecutive order:
-        if (p.getCurrentPosition() == sequence[i])
+        if ((*iterator).getCurrentPosition() == sequence[i])
         {
-          sequence_PL_1[i] = p.getCurrentPosition();
+          sequence_PL_1[i] = (*iterator).getCurrentPosition();
           for (int j = 0; j < 5; j++) {
             Serial.println(sequence_PL_1[j]);
           }
 
           // Blink green if the player chose the right number:
-          p.setLightStrategy(BLINK, p.getUint32Color(0, 255, 0));
+          (*iterator).setLightStrategy(BLINK, (*iterator).getUint32Color(0, 255, 0));
         }
         else
         {
@@ -129,7 +123,7 @@ void SequenceGame::updatePlaying(std::vector<Player>& players)
 
     // Check if a player has won (check to see if the last entry is > 0):
     if (sequence_PL_1[4] >= 0) {
-      p.setLightStrategy(FANFARE, p.getUint32Color(0, 255, 0));
+      (*iterator).setLightStrategy(FANFARE, (*iterator).getUint32Color(0, 255, 0));
       currentStatus = DONE;
     }
   }

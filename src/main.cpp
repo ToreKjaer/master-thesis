@@ -2,12 +2,12 @@
 #include "player.h"
 #include "sequencegame.h"
 #include <StandardCplusplus.h>
-#include <vector>
+#include <list>
 
 using namespace std;
 
 // Players:
-std::vector<Player> players;
+std::list<Player> players;
 
 // Games:
 SequenceGame sequenceGame;
@@ -18,7 +18,7 @@ void setup()
   Serial.begin(9600);
   Serial.println("Serial started.");
 
-  // Add players to the vector:
+  // Add players to the list:
   players.push_back(Player(2, 11, 12, 4));
   players.push_back(Player(3, 13, 14, 7));
   players.push_back(Player(5, 15, 16, 8));
@@ -26,9 +26,10 @@ void setup()
 
   Serial.println(players.size());
 
-  for (Player p : players)
+  // Initialize players (set pin modes etc.):
+  for(std::list<Player>::iterator iterator = players.begin(); iterator != players.end(); iterator++)
   {
-    p.initialize();
+    (*iterator).initialize();
   }
 
   // TODO: Start the game from the Serial.
@@ -40,9 +41,9 @@ void setup()
 void loop()
 {
   // Update players:
-  for (Player p : players)
+  for(std::list<Player>::iterator iterator = players.begin(); iterator != players.end(); iterator++)
   {
-    p.update();
+    (*iterator).update();
   }
 
   // Update the game:

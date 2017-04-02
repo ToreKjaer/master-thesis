@@ -5,7 +5,7 @@
 #include "Arduino.h"
 #include "player.h"
 #include <StandardCplusplus.h>
-#include <vector>
+#include <list>
 
 using namespace std;
 
@@ -15,6 +15,7 @@ class SequenceGame {
 
   int sequence[5];
   int sequence_PL_1[5] = {-1, -1, -1, -1, -1};
+  // TODO: Have an array of arrays wrt. individual player sequences.
 
   Gamestatus currentStatus;
 
@@ -23,14 +24,14 @@ class SequenceGame {
   int lastShownIndex;
 
   // Private methods:
-  void updateShowSequence(std::vector<Player>& players);
-  void updatePlaying(std::vector<Player>& players);
+  void updateShowSequence(std::list<Player>& players);
+  void updatePlaying(std::list<Player>& players);
 
 public:
   SequenceGame();
 
   void startGame();
-  void update(std::vector<Player>& players);
+  void update(std::list<Player>& players);
 };
 
 #endif
