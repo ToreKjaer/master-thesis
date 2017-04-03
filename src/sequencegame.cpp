@@ -68,21 +68,20 @@ void SequenceGame::updateShowSequence(std::list<Player>& players)
   // and increment the last shown index accordingly:
   if (millis() - lastUpdate >= interval)
   {
+    // Stop showing the sequence if all of the sequence has been displayed
+    // and turn off the shown sequence:
     if (lastShownIndex == 5)
     {
+      for(std::list<Player>::iterator iterator = players.begin(); iterator != players.end(); iterator++)
+      {
+        (*iterator).turnOffPixels();
+      }
       currentStatus = PLAYING;
+      return;
     }
 
     for(std::list<Player>::iterator iterator = players.begin(); iterator != players.end(); iterator++)
     {
-      // Stop showing the sequence if all of the sequence has been displayed
-      // and turn off the shown sequence:
-      if (lastShownIndex == 5)
-      {
-        (*iterator).turnOffPixels();
-        return;
-      }
-
       // Set the next pixel to ON in the sequence:
       (*iterator).turnOffPixels();
       (*iterator).setPixel(sequence[lastShownIndex]);
@@ -98,6 +97,9 @@ void SequenceGame::updateShowSequence(std::list<Player>& players)
 
 void SequenceGame::updatePlaying(std::list<Player>& players)
 {
+  bool foundWinner = false;
+  int currentPlayerSequence = 0;
+
   for(std::list<Player>::iterator iterator = players.begin(); iterator != players.end(); iterator++)
   {
     // Enable player input:
@@ -107,14 +109,14 @@ void SequenceGame::updatePlaying(std::list<Player>& players)
     for (int i = 0; i < 5; i++)
     {
       // Keep track of which number we have already remembered correctly:
-      if (sequence_PL_1[i] < 0)
+      if (playerSequences[currentPlayerSequence][i] < 0)
       {
         // Only accept a number if it is in consecutive order:
-        if ((*iterator).getCurrentPosition() == sequence[i])
+        if ((*iterator).getCurrentPosition() == sequence[i] + (*iterator).getOffset())
         {
-          sequence_PL_1[i] = (*iterator).getCurrentPosition();
+          playerSequences[currentPlayerSequence][i] = (*iterator).getCurrentPosition();
           for (int j = 0; j < 5; j++) {
-            Serial.println(sequence_PL_1[j]);
+            Serial.println(playerSequences[currentPlayerSequence][j]);
           }
 
           // Blink green if the player chose the right number:
@@ -128,10 +130,30 @@ void SequenceGame::updatePlaying(std::list<Player>& players)
       }
     }
 
-    // Check if a player has won (check to see if the last entry is > 0):
-    if (sequence_PL_1[4] >= 0) {
-      (*iterator).setLightStrategy(FANFARE, (*iterator).getUint32Color(0, 255, 0));
+    // Check if a player has won (check to see if the last entry in the individual player sequence array is > 0):
+    if (playerSequences[currentPlayerSequence][4] >= 0) {
+      foundWinner = true;
       currentStatus = DONE;
+    }
+
+    // Increment the player sequence counter:
+    currentPlayerSequence++;
+  }
+
+  // If a winner is found, iterate through the players again to display winner/looser fanfare:
+  if (foundWinner)
+  {
+    currentPlayerSequence = 0;
+    for(std::list<Player>::iterator iterator = players.begin(); iterator != players.end(); iterator++)
+    {
+      if (playerSequences[currentPlayerSequence][4] >= 0) {
+        (*iterator).setLightStrategy(FANFARE, (*iterator).getUint32Color(0, 255, 0));
+      }
+      else if (playerSequences[currentPlayerSequence][4] < 0 && foundWinner)
+      {
+        (*iterator).setLightStrategy(FANFARE, (*iterator).getUint32Color(255, 0, 0));
+      }
+      currentPlayerSequence++;
     }
   }
 }

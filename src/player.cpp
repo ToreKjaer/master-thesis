@@ -1,10 +1,11 @@
 #include "player.h"
 
 // Constructor.
-Player::Player(int ledPin, int encoderPinA, int encoderPinB, int switchPin)
+Player::Player(int offset, int encoderPinA, int encoderPinB, int switchPin)
 {
   // Set field variables:
-  this->ledPin = ledPin;
+  this->offset = offset;
+  this->secretPosition = offset;
   this->encoderPinA = encoderPinA;
   this->encoderPinB = encoderPinB;
   this->switchPin = switchPin;
@@ -20,14 +21,14 @@ void Player::initialize()
   this->aLastState = digitalRead(this->encoderPinA);
 
   // Set a random color for this player:
-  randomSeed(analogRead(0));
+  randomSeed(analogRead(0) + offset);
   this->color = pixels.Color(random(0, 255), random(0, 255), random(0, 255));
 
   // Disable player input per default:
   this->playerInput = false;
 
   // Initialize NeoPixel strip:
-  pixels = Adafruit_NeoPixel(6, ledPin);
+  pixels = Adafruit_NeoPixel(24, 2);
   pixels.begin();
 
   // Turn off all LEDs initially:
@@ -39,13 +40,18 @@ int Player::getCurrentPosition()
   return this->currentPosition;
 }
 
+int Player::getOffset()
+{
+  return offset;
+}
+
 // Called from the main loop of the Arduino sketch.
 void Player::update()
 {
   // Only update if we want user input:
   if (this->playerInput)
   {
-    Serial.println(secretPosition);
+    delay(1); // NB! Is somehow needed, otherwise the LEDs will flicker randomly!!
     updateRotaryEncoder();
     updateNeoPixels();
     checkClick();
@@ -67,7 +73,7 @@ void Player::updateRotaryEncoder()
     // Are we rotating clockwise:
     if (digitalRead(this->encoderPinB) != this->aState)
     {
-      if (this->secretPosition < pixels.numPixels() - 1)
+      if (this->secretPosition < offset + 6 - 1)
       {
         this->secretPosition++;
         turnOffPixels();
@@ -75,7 +81,7 @@ void Player::updateRotaryEncoder()
     } else
     // Or are we rotating anti-clockwise:
     {
-      if (this->secretPosition > 0)
+      if (this->secretPosition > offset)
       {
         this->secretPosition--;
         turnOffPixels();
@@ -122,7 +128,6 @@ void Player::checkClick()
       // Button pressed.
       btnPressed = true;
       currentPosition = secretPosition;
-      Serial.println(currentPosition);
     }
   }
 }
@@ -133,7 +138,7 @@ void Player::checkClick()
 
 // Turn all LEDs off on the NeoPixel strip.
 void Player::turnOffPixels() {
-  for (unsigned int i = 0; i < pixels.numPixels(); i++)
+  for (unsigned int i = offset; i < offset + 6; i++)
   {
     pixels.setPixelColor(i, 0, 0, 0);
   }
@@ -143,7 +148,7 @@ void Player::turnOffPixels() {
 // Turn on the LED on position to blue.
 void Player::setPixel(int position)
 {
-  pixels.setPixelColor(position, 0, 0, 255);
+  pixels.setPixelColor(position + offset, 0, 0, 255);
   pixels.show();
 }
 
@@ -196,8 +201,8 @@ void Player::updateFanfare()
     }
     else
     {
-      int startIndex = 3 - (numOfTimes % 4);
-      int endIndex = 2 + (numOfTimes % 4);
+      int startIndex = offset + 3 - (numOfTimes % 4);
+      int endIndex = offset + 2 + (numOfTimes % 4);
 
       turnOffPixels();
       for (int i = startIndex; i <= endIndex; i++)

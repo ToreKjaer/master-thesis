@@ -11,10 +11,10 @@ class Player
 {
   // encoderPinA is the right most pin on the rotary encoder seen from above with the three pins pointing upwards.
   // encoderPinB is the left most pin on the rotary encoder seen from above with the three pins pointing upwards.
-  int ledPin, encoderPinA, encoderPinB, switchPin;
+  int encoderPinA, encoderPinB, switchPin;
 
   // The current position of the LED:
-  unsigned int secretPosition = 0, currentPosition;
+  unsigned int secretPosition, currentPosition, offset;
   Colorstrategy currentColorStrategy = NORMAL;
 
   // Variables to determine the rotary encoder's position:
@@ -39,13 +39,14 @@ class Player
   void stopLightStrategy(int blinkNumOfTimes);
 
 public:
-  Player(int ledPin, int encoderPinA, int encoderPinB, int switchPin);
+  Player(int offset, int encoderPinA, int encoderPinB, int switchPin);
 
   void initialize();
 
   int getCurrentPosition();
   void update();
   void enablePlayerInput(bool enable);
+  int getOffset();
 
   // NeoPixel methods:
   void turnOffPixels();

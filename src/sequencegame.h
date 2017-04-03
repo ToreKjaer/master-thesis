@@ -14,8 +14,13 @@ enum Gamestatus { SHOW_SEQUENCE, PLAYING, DONE };
 class SequenceGame {
 
   int sequence[5];
-  int sequence_PL_1[5] = {-1, -1, -1, -1, -1};
-  // TODO: Have an array of arrays wrt. individual player sequences.
+  int playerSequences[4][5] =
+  {
+    {-1, -1, -1, -1, -1},
+    {-1, -1, -1, -1, -1},
+    {-1, -1, -1, -1, -1},
+    {-1, -1, -1, -1, -1}
+  };
 
   Gamestatus currentStatus;
 
