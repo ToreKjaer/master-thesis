@@ -14,7 +14,7 @@ class Player
   int ledPin, encoderPinA, encoderPinB, switchPin;
 
   // The current position of the LED:
-  unsigned int secretPosition, currentPosition;
+  unsigned int secretPosition = 0, currentPosition;
   Colorstrategy currentColorStrategy = NORMAL;
 
   // Variables to determine the rotary encoder's position:

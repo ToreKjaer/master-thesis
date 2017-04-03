@@ -18,13 +18,12 @@ void setup()
   Serial.begin(9600);
   Serial.println("Serial started.");
 
-  // Add players to the list:
-  players.push_back(Player(2, 11, 12, 4));
-  players.push_back(Player(3, 13, 14, 7));
-  players.push_back(Player(5, 15, 16, 8));
-  players.push_back(Player(6, 17, 18, 9));
+  Player p1(2, 11, 12, 4);
+  Player p2(8, 13, 14, 5);
 
-  Serial.println(players.size());
+  // Add players to the list:
+  players.push_back(p1);
+  players.push_back(p2);
 
   // Initialize players (set pin modes etc.):
   for(std::list<Player>::iterator iterator = players.begin(); iterator != players.end(); iterator++)

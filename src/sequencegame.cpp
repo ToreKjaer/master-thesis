@@ -62,30 +62,37 @@ void SequenceGame::update(std::list<Player>& players)
 
 void SequenceGame::updateShowSequence(std::list<Player>& players)
 {
-  for(std::list<Player>::iterator iterator = players.begin(); iterator != players.end(); iterator++)
-  {
-    unsigned long interval = 1000; // ms
+  unsigned long interval = 1000; // ms
 
-    // Show the next pixel in the sequence if the interval has passed
-    // and increment the last shown index accordingly:
-    if (millis() - lastUpdate >= interval)
+  // Show the next pixel in the sequence if the interval has passed
+  // and increment the last shown index accordingly:
+  if (millis() - lastUpdate >= interval)
+  {
+    if (lastShownIndex == 5)
+    {
+      currentStatus = PLAYING;
+    }
+
+    for(std::list<Player>::iterator iterator = players.begin(); iterator != players.end(); iterator++)
     {
       // Stop showing the sequence if all of the sequence has been displayed
       // and turn off the shown sequence:
       if (lastShownIndex == 5)
       {
-        currentStatus = PLAYING;
         (*iterator).turnOffPixels();
         return;
       }
 
+      // Set the next pixel to ON in the sequence:
       (*iterator).turnOffPixels();
       (*iterator).setPixel(sequence[lastShownIndex]);
-      lastShownIndex++;
-
-      // Update the last updated variable:
-      lastUpdate = millis();
     }
+
+    // Increment index:
+    lastShownIndex++;
+
+    // Update the last updated variable:
+    lastUpdate = millis();
   }
 }
 

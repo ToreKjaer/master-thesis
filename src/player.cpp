@@ -27,7 +27,7 @@ void Player::initialize()
   this->playerInput = false;
 
   // Initialize NeoPixel strip:
-  pixels = Adafruit_NeoPixel(6, ledPin, NEO_GRB + NEO_KHZ800);
+  pixels = Adafruit_NeoPixel(6, ledPin);
   pixels.begin();
 
   // Turn off all LEDs initially:
@@ -45,6 +45,7 @@ void Player::update()
   // Only update if we want user input:
   if (this->playerInput)
   {
+    Serial.println(secretPosition);
     updateRotaryEncoder();
     updateNeoPixels();
     checkClick();
