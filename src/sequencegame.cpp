@@ -2,14 +2,31 @@
 
 SequenceGame::SequenceGame()
 {
-  // Set field variables:
-  lastShownIndex = 0;
+  // Empty contructor.
 }
 
 void SequenceGame::startGame()
 {
+  // Set field variables:
+  lastShownIndex = 0;
+
   // Set an initial value for the lastUpdate variable:
   lastUpdate = millis();
+
+  // Set initial values in the sequence arrays:
+  for (int i = 0; i < 4; i++)
+  {
+    for (int j = 0; j < 5; j++)
+    {
+      playerSequences[i][j] = -1;
+    }
+  }
+
+  // Reset temp last pressed array:
+  for (int i = 0; i < 4; i++)
+  {
+    lastPressedPosition[i] = -1;
+  }
 
   // Populate the sequence with 4 random numbers:
   Serial.println("Sequence:");
@@ -75,6 +92,9 @@ void SequenceGame::updateShowSequence(std::list<Player>& players)
       for(std::list<Player>::iterator iterator = players.begin(); iterator != players.end(); iterator++)
       {
         (*iterator).turnOffPixels();
+
+        // Enable player input:
+        (*iterator).enablePlayerInput(true);
       }
       currentStatus = PLAYING;
       return;
@@ -102,9 +122,6 @@ void SequenceGame::updatePlaying(std::list<Player>& players)
 
   for(std::list<Player>::iterator iterator = players.begin(); iterator != players.end(); iterator++)
   {
-    // Enable player input:
-    (*iterator).enablePlayerInput(true);
-
     // Iterate through all entries in the array:
     for (int i = 0; i < 5; i++)
     {
@@ -121,10 +138,23 @@ void SequenceGame::updatePlaying(std::list<Player>& players)
 
           // Blink green if the player chose the right number:
           (*iterator).setLightStrategy(BLINK, (*iterator).getUint32Color(0, 255, 0));
+
+          // Update the temp last pressed position:
+          lastPressedPosition[currentPlayerSequence] = (*iterator).getCurrentPosition();
+
+          break;
         }
         else
         {
-          // TODO: Blink red when bad choice.
+          if (lastPressedPosition[currentPlayerSequence] != (*iterator).getCurrentPosition())
+          {
+            // Blink red when a bad position was pressed:
+            (*iterator).setLightStrategy(BLINK, (*iterator).getUint32Color(255, 0, 0));
+
+            // Update the temp last pressed position:
+            lastPressedPosition[currentPlayerSequence] = (*iterator).getCurrentPosition();
+          }
+
           break;
         }
       }

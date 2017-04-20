@@ -56,6 +56,13 @@ void loop()
   for(std::list<Player>::iterator iterator = players.begin(); iterator != players.end(); iterator++)
   {
     (*iterator).update();
+
+    // Turn off LEDs when the fanfare is done displaying:
+    if ((*iterator).getLightStrategy() == OFF && (*iterator).isEnabled())
+    {
+      (*iterator).enablePlayerInput(false);
+      gameStarted = false;
+    }
   }
 
   // Update the game:

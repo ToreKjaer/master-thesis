@@ -14,13 +14,11 @@ enum Gamestatus { SHOW_SEQUENCE, PLAYING, DONE };
 class SequenceGame {
 
   int sequence[5];
-  int playerSequences[4][5] =
-  {
-    {-1, -1, -1, -1, -1},
-    {-1, -1, -1, -1, -1},
-    {-1, -1, -1, -1, -1},
-    {-1, -1, -1, -1, -1}
-  };
+  int playerSequences[4][5];
+
+  // Temp array to keep track of the last position in order to display the red
+  // blink animation when pressed wrongly:
+  int lastPressedPosition[4] = {-1, -1, -1, -1};
 
   Gamestatus currentStatus;
 
@@ -37,6 +35,8 @@ public:
 
   void startGame();
   void update(std::list<Player>& players);
+
+  Gamestatus getCurrentGameStatus();
 };
 
 #endif

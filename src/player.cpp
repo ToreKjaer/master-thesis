@@ -49,7 +49,7 @@ int Player::getOffset()
 void Player::update()
 {
   // Only update if we want user input:
-  if (this->playerInput)
+  if (playerInput)
   {
     delay(1); // NB! Is somehow needed, otherwise the LEDs will flicker randomly!!
     updateRotaryEncoder();
@@ -61,7 +61,12 @@ void Player::update()
 // Set player enabled:
 void Player::enablePlayerInput(bool enable)
 {
-  this->playerInput = enable;
+  playerInput = enable;
+}
+
+bool Player::isEnabled()
+{
+  return playerInput;
 }
 
 // Update the state of the rotary encoder if af pulse has occured.
@@ -96,6 +101,11 @@ void Player::updateRotaryEncoder()
 void Player::updateNeoPixels() {
   switch (currentColorStrategy)
   {
+    case OFF:
+      currentColorStrategy = NORMAL;
+      currentPosition = -1; // Reset "click" position.
+      break;
+
     case NORMAL:
       pixels.setPixelColor(secretPosition, color);
       pixels.show();
@@ -159,10 +169,15 @@ void Player::setLightStrategy(Colorstrategy strategy, uint32_t color)
   strategyColor = color;
 }
 
+Colorstrategy Player::getLightStrategy()
+{
+  return currentColorStrategy;
+}
+
 // Set blinking mode with a respective color.
 void Player::updateBlink()
 {
-  stopLightStrategy(8);
+  stopLightStrategy(8, NORMAL);
 
   unsigned int interval = 50; // ms
 
@@ -188,7 +203,7 @@ void Player::updateBlink()
 
 void Player::updateFanfare()
 {
-  stopLightStrategy(40);
+  stopLightStrategy(40, OFF);
 
   unsigned int interval = 100; // ms
 
@@ -218,11 +233,11 @@ void Player::updateFanfare()
 }
 
 // Stop blinking if we have done it X times and reset values:
-void Player::stopLightStrategy(int blinkNumOfTimes)
+void Player::stopLightStrategy(int blinkNumOfTimes, Colorstrategy strategy)
 {
   if (numOfTimes == blinkNumOfTimes)
   {
-    currentColorStrategy = NORMAL;
+    currentColorStrategy = strategy;
     lastUpdate = 0;
     pixelIsOn = false;
     numOfTimes = 0;

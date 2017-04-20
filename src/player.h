@@ -5,7 +5,7 @@
 #include "Arduino.h"
 #include <Adafruit_NeoPixel.h>
 
-enum Colorstrategy { NORMAL, BLINK, FANFARE };
+enum Colorstrategy { OFF, NORMAL, BLINK, FANFARE };
 
 class Player
 {
@@ -14,7 +14,7 @@ class Player
   int encoderPinA, encoderPinB, switchPin;
 
   // The current position of the LED:
-  unsigned int secretPosition, currentPosition, offset;
+  unsigned int secretPosition, currentPosition = -1, offset;
   Colorstrategy currentColorStrategy = NORMAL;
 
   // Variables to determine the rotary encoder's position:
@@ -36,7 +36,7 @@ class Player
   void updateRotaryEncoder();
   void updateNeoPixels();
   void checkClick();
-  void stopLightStrategy(int blinkNumOfTimes);
+  void stopLightStrategy(int blinkNumOfTimes, Colorstrategy strategy);
 
 public:
   Player(int offset, int encoderPinA, int encoderPinB, int switchPin);
@@ -46,12 +46,14 @@ public:
   int getCurrentPosition();
   void update();
   void enablePlayerInput(bool enable);
+  bool isEnabled();
   int getOffset();
 
   // NeoPixel methods:
   void turnOffPixels();
   void setPixel(int position);
   void setLightStrategy(Colorstrategy strategy, uint32_t color);
+  Colorstrategy getLightStrategy();
   void updateBlink();
   void updateFanfare();
   uint32_t getUint32Color(int r, int g, int b);
