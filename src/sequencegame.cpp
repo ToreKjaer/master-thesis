@@ -95,6 +95,7 @@ void SequenceGame::updateShowSequence(std::list<Player>& players)
 
         // Enable player input:
         (*iterator).enablePlayerInput(true);
+        (*iterator).enableRotaryEncoder(true);
       }
       currentStatus = PLAYING;
       return;

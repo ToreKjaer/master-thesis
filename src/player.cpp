@@ -40,6 +40,11 @@ int Player::getCurrentPosition()
   return this->currentPosition;
 }
 
+void Player::setSecretPosition(int position)
+{
+  secretPosition = position;
+}
+
 int Player::getOffset()
 {
   return offset;
@@ -49,10 +54,14 @@ int Player::getOffset()
 void Player::update()
 {
   // Only update if we want user input:
+  if (rotaryEncoderInput)
+  {
+    updateRotaryEncoder();
+  }
+
   if (playerInput)
   {
     delay(1); // NB! Is somehow needed, otherwise the LEDs will flicker randomly!!
-    updateRotaryEncoder();
     updateNeoPixels();
     checkClick();
   }
@@ -62,6 +71,12 @@ void Player::update()
 void Player::enablePlayerInput(bool enable)
 {
   playerInput = enable;
+}
+
+// Set the rotary encoder input:
+void Player::enableRotaryEncoder(bool enable)
+{
+  rotaryEncoderInput = enable;
 }
 
 bool Player::isEnabled()

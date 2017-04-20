@@ -1,16 +1,22 @@
 #include "Arduino.h" // Must have include in order to use Arduino specific functions.
 #include "player.h"
 #include "sequencegame.h"
+#include "snakegame.h"
 #include <StandardCplusplus.h>
 #include <list>
 
 using namespace std;
+
+// Game enums:
+enum GameTypes { SEQUENCEGAME, SNAKEGAME };
+GameTypes currentGame;
 
 // Players:
 std::list<Player> players;
 
 // Games:
 SequenceGame sequenceGame;
+SnakeGame snakeGame;
 
 bool gameStarted = false;
 
@@ -45,10 +51,18 @@ void loop()
   // Start sequence game with command: "seq" in Serial input:
   if (Serial.available() > 0)
   {
-    if (Serial.readString() == "seq")
+    String serialReadTemp = Serial.readString();
+    if (serialReadTemp == "seq")
     {
         sequenceGame.startGame();
         gameStarted = true;
+        currentGame = SEQUENCEGAME;
+    }
+    else if (serialReadTemp == "snake")
+    {
+        snakeGame.startGame(players);
+        gameStarted = true;
+        currentGame = SNAKEGAME;
     }
   }
 
@@ -60,14 +74,24 @@ void loop()
     // Turn off LEDs when the fanfare is done displaying:
     if ((*iterator).getLightStrategy() == OFF && (*iterator).isEnabled())
     {
+      Serial.println("Stopped");
       (*iterator).enablePlayerInput(false);
       gameStarted = false;
     }
   }
 
-  // Update the game:
+  // Update the current game playing:
   if (gameStarted)
   {
-    sequenceGame.update(players);
+    switch (currentGame) {
+      case SEQUENCEGAME:
+        sequenceGame.update(players);
+        break;
+
+      case SNAKEGAME:
+        snakeGame.update(players);
+        break;
+    }
+
   }
 }

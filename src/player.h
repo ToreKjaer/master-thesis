@@ -24,7 +24,7 @@ class Player
   Adafruit_NeoPixel pixels;
   uint32_t color; // Color of the NeoPixels.
 
-  bool playerInput, btnPressed;
+  bool playerInput, rotaryEncoderInput, btnPressed;
 
   // Pixel blink variables:
   unsigned long lastUpdate = 0;
@@ -44,8 +44,10 @@ public:
   void initialize();
 
   int getCurrentPosition();
+  void setSecretPosition(int position);
   void update();
   void enablePlayerInput(bool enable);
+  void enableRotaryEncoder(bool enable);
   bool isEnabled();
   int getOffset();
 
