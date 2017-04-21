@@ -1,7 +1,7 @@
 #include "player.h"
 
 // Constructor.
-Player::Player(int offset, int encoderPinA, int encoderPinB, int switchPin)
+Player::Player(int offset, int encoderPinA, int encoderPinB, int switchPin, uint32_t color)
 {
   // Set field variables:
   this->offset = offset;
@@ -9,6 +9,7 @@ Player::Player(int offset, int encoderPinA, int encoderPinB, int switchPin)
   this->encoderPinA = encoderPinA;
   this->encoderPinB = encoderPinB;
   this->switchPin = switchPin;
+  this->color = color;
 }
 
 void Player::initialize()
@@ -19,10 +20,6 @@ void Player::initialize()
   pinMode(this->switchPin, INPUT);
   digitalWrite(this->switchPin, HIGH);
   this->aLastState = digitalRead(this->encoderPinA);
-
-  // Set a random color for this player:
-  randomSeed(analogRead(0) + offset);
-  this->color = pixels.Color(random(0, 255), random(0, 255), random(0, 255));
 
   // Disable player input per default:
   this->playerInput = false;
@@ -170,10 +167,10 @@ void Player::turnOffPixels() {
   pixels.show();
 }
 
-// Turn on the LED on position to blue.
+// Turn on the LED on position to a green'ish color.
 void Player::setPixel(int position)
 {
-  pixels.setPixelColor(position + offset, 0, 0, 255);
+  pixels.setPixelColor(position + offset, 60, 212, 49);
   pixels.show();
 }
 

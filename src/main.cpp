@@ -11,6 +11,12 @@ using namespace std;
 enum GameTypes { SEQUENCEGAME, SNAKEGAME };
 GameTypes currentGame;
 
+// Colors:
+uint32_t yellow = 16776960;
+uint32_t purple = 8388736;
+uint32_t white = 16777215;
+uint32_t blue = 49151;
+
 // Players:
 std::list<Player> players;
 
@@ -26,10 +32,10 @@ void setup()
   Serial.begin(9600);
   Serial.println("Serial started.");
 
-  Player p1(0, 11, 12, 4);
-  Player p2(6, 13, 14, 5);
-  Player p3(12, 15, 16, 7);
-  Player p4(18, 17, 18, 8);
+  Player p1(0, 11, 12, 4, yellow);
+  Player p2(6, 13, 14, 5, purple);
+  Player p3(12, 15, 16, 7, white);
+  Player p4(18, 17, 18, 8, blue);
 
   // Add players to the list:
   players.push_back(p1);
@@ -42,8 +48,6 @@ void setup()
   {
     (*iterator).initialize();
   }
-
-  // TODO: Look into if we need to delete objects after using them.. To prevent memory leaks. Could be done through a delete() callback passed to the given game object.
 }
 
 void loop()
@@ -76,6 +80,7 @@ void loop()
     {
       Serial.println("Stopped");
       (*iterator).enablePlayerInput(false);
+      (*iterator).enableRotaryEncoder(false);
       gameStarted = false;
     }
   }

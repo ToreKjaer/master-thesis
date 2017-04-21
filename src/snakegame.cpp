@@ -9,6 +9,13 @@ void SnakeGame::startGame(std::list<Player> &players)
 {
   // Set an initial value for the lastUpdate variable:
   lastUpdate = millis();
+  lastVelocityIncrease = millis();
+
+  // Reset values:
+  currentPosition = 0;
+  currentEdgePosition = 0;
+  velocity = 1000;
+  velocityIncreasements = 0;
 
   // Set the gameEnded bool:
   gameEnded = false;
@@ -21,6 +28,15 @@ void SnakeGame::startGame(std::list<Player> &players)
   {
     candyPositions[i] = getRandomPosition();
     playerScores[i] = 0;
+  }
+
+  for(std::list<Player>::iterator iterator = players.begin(); iterator != players.end(); iterator++)
+  {
+    // Turn off old pixels for good measure:
+    (*iterator).turnOffPixels();
+
+    // Enable the LED and click functionality:
+    (*iterator).enablePlayerInput(true);
   }
 }
 
@@ -58,9 +74,6 @@ void SnakeGame::update(std::list<Player> &players)
       int currentPlayerIndex = 0;
       for(std::list<Player>::iterator iterator = players.begin(); iterator != players.end(); iterator++)
       {
-        // Enable the LED and click functionality:
-        (*iterator).enablePlayerInput(true);
-
         // Light the current LED:
         (*iterator).turnOffPixels();
         (*iterator).setSecretPosition(currentPosition + (*iterator).getOffset());
@@ -81,7 +94,7 @@ void SnakeGame::update(std::list<Player> &players)
         Serial.print("Player ");
         Serial.print(currentPlayerIndex);
         Serial.print(": ");
-        Serial.println(playerScores[currentPlayerIndex]);
+        Serial.print(playerScores[currentPlayerIndex]);
         Serial.println("");
 
         // Increment the current player position:

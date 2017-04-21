@@ -39,7 +39,7 @@ class Player
   void stopLightStrategy(int blinkNumOfTimes, Colorstrategy strategy);
 
 public:
-  Player(int offset, int encoderPinA, int encoderPinB, int switchPin);
+  Player(int offset, int encoderPinA, int encoderPinB, int switchPin, uint32_t color);
 
   void initialize();
 

@@ -54,8 +54,6 @@ void SequenceGame::startGame()
   }
   Serial.println("");
 
-  // TODO: Create start signal.
-
   // Set the current status of the game:
   currentStatus = SHOW_SEQUENCE;
 }
