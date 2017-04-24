@@ -23,20 +23,21 @@ void SnakeGame::startGame(std::list<Player> &players)
   // For debug:
   Serial.println("SnakeGame started");
 
-  // Generate random values for each player and reset their scores:
-  for (int i = 0; i < 4; i++)
-  {
-    candyPositions[i] = getRandomPosition();
-    playerScores[i] = 0;
-  }
-
+  int i = 0;
   for(std::list<Player>::iterator iterator = players.begin(); iterator != players.end(); iterator++)
   {
+    // Generate random values for each player and reset their scores:
+    candyPositions[i] = getRandomPosition();
+    playerScores[i] = 0;
+
     // Turn off old pixels for good measure:
     (*iterator).turnOffPixels();
 
     // Enable the LED and click functionality:
     (*iterator).enablePlayerInput(true);
+
+    // Increment counter:
+    i++;
   }
 }
 
@@ -79,7 +80,7 @@ void SnakeGame::update(std::list<Player> &players)
         (*iterator).setSecretPosition(currentPosition + (*iterator).getOffset());
 
         // Check if a player has pressed the button when on the right "candy" position:
-        if ((*iterator).getCurrentPosition() == candyPositions[currentPlayerIndex])
+        if ((*iterator).getCurrentPosition() == candyPositions[currentPlayerIndex] + (*iterator).getOffset())
         {
           // Increment the given players score:
           playerScores[currentPlayerIndex]++;
